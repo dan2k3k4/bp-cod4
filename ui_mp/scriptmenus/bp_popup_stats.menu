@@ -1,0 +1,342 @@
+// ----------------------------------------------------------------------------
+// Mod: BP Mod
+// Website: http://www.bptourneys.com
+// 
+// Author: JackTheRipper
+// Description: End of Game Stats
+// Notes: 640 x 480
+// ----------------------------------------------------------------------------
+
+#include "ui/menudef.h"
+#include "ui_mp/common_macro.inc"
+#include "ui_mp/menustyle.inc"
+#include "ui/choices_setup_common.menu"
+
+// ANIMATION SPEEDS
+#define POPUP_MOVE_SPEED		400 	//milliseconds
+#define ANIMATE_DISTANCE		400		//units
+
+// top bar position/size
+#define WIDTH_TOPBAR			620
+#define HEIGHT_TOPBAR			34
+#define ORIGIN_TOPBAR_X			0 //(-(WIDTH_TOPBAR/2))
+#define ORIGIN_TOPBAR_Y			-50 //80
+#define ORIGIN_TOPBAR			ORIGIN_TOPBAR_X ORIGIN_TOPBAR_Y
+#define RECT_TOPBAR				ORIGIN_TOPBAR WIDTH_TOPBAR HEIGHT_TOPBAR
+#define RECT_TOPBAR_ALIGNED 	RECT_TOPBAR HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+
+// main frame position/size
+#define WIDTH_MAINFRAME			WIDTH_TOPBAR
+#define HEIGHT_MAINFRAME		396
+#define ORIGIN_MAINFRAME_X		ORIGIN_TOPBAR_X
+#define ORIGIN_MAINFRAME_Y		(ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR+6)
+#define ORIGIN_MAINFRAME		ORIGIN_MAINFRAME_X ORIGIN_MAINFRAME_Y
+#define RECT_MAINFRAME			ORIGIN_MAINFRAME WIDTH_MAINFRAME HEIGHT_MAINFRAME
+#define RECT_MAINFRAME_ALIGNED	RECT_MAINFRAME HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+
+// colors/border
+#define EOG_BASE_COLOR			0.25 0.25 0.3 1
+#define EOG_BG_COLOR			0.1 0.1 0.12 0.85
+#define EOG_SHINE_COLOR			0.9 0.9 0.9 0.45
+#define EOG_BORDER_SIZE			1
+#define EOG_BORDER_COLOR		0.35 0.35 0.37 1
+#define EOG_BORDER				WINDOW_BORDER_RAISED
+#define EOG_TEXT_COLOR			0.7 0.7 0.72 1
+#define EOG_TITLE_COLOR			COLOR_TITLE
+#define EOG_INNER_COLOR			0 0 0 0.3
+
+#define TITLE_BG_COLOR_OFF		1 1 1 0.075
+#define TITLE_BG_COLOR_ON		1 0.8 0.4 0.6 //0.95 0.80 0.3 0.6
+
+#define ZERO_TO_ONE				milliseconds()-dvarInt(ui_time_marker)
+#define UNIT_GROWTH				sin( sin( min( ZERO_TO_ONE, POPUP_MOVE_SPEED )*(1.5707/POPUP_MOVE_SPEED) )*1.5707 )
+
+#define FRAME_ANIMATE( offset ) \
+	offset-offset*UNIT_GROWTH
+
+#define FRAMING( prect ) \
+	PREPROC_SHADER_DRAW( prect, 0 0, "white", EOG_BASE_COLOR, EOG_BORDER, EOG_BORDER_SIZE, 0 0 0 0 visible 1 )\
+	PREPROC_SHADER_DRAW( prect, 0 0, "white", EOG_BG_COLOR, EOG_BORDER, EOG_BORDER_SIZE, EOG_BORDER_COLOR visible 1 )\
+	PREPROC_SHADER_DRAW( prect, 0 0, "line_horizontal", EOG_SHINE_COLOR, EOG_BORDER, EOG_BORDER_SIZE, 0 0 0 0 visible 1 )
+
+#define ALIGNED_IN_X	14
+#define ALIGNED_IN_Y	24
+
+#define STAT_SLOT_COL1_X	ALIGNED_IN_X
+#define STAT_SLOT_COL2_X	(STAT_SLOT_COL1_X+192)
+#define STAT_SLOT_COL3_X	(STAT_SLOT_COL2_X+192)
+
+#define STAT_SLOT_LINE_GAP	16
+#define STAT_SLOT_GAP		18
+
+#define STAT_SLOT_1_Y		(ALIGNED_IN_Y+STAT_SLOT_GAP)
+#define STAT_SLOT_2_Y		(STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP+STAT_SLOT_GAP)
+#define STAT_SLOT_3_Y		(STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP+STAT_SLOT_GAP)
+#define STAT_SLOT_4_Y		(STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP+STAT_SLOT_GAP)
+#define STAT_SLOT_5_Y		(STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP+STAT_SLOT_GAP)
+#define STAT_SLOT_6_Y		(STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP+STAT_SLOT_GAP)
+#define STAT_SLOT_7_Y		(STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP+STAT_SLOT_GAP)
+
+{
+	menuDef
+	{
+		name 			"bp_popup_stats"
+		rect			(-(WIDTH_TOPBAR/2)) 68 WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+		onOpen
+		{ 
+			open "bp_popup_stats_body"; 					// open child popup page
+			play "mp_ingame_summary"; 
+			exec "setdvartotime ui_time_marker"; 	// animation start marker
+		}
+		onESC 
+		{ 
+			close self; 
+		}
+		onClose
+		{
+			;
+		}
+		
+		// Fullscreen darkened backdrop
+		PREPROC_SHADER_DRAW( -800 -800 2000 2000, 0 0, "white", 0 0 0 0.6, 0, 0, 0 0 0 0 )
+
+		// ==================== TOP BAR ===================
+		// Top bar frame
+		FRAMING( RECT_TOPBAR )
+		
+		// Top bar title
+		PREPROC_TEXT_DRAW( ORIGIN_TOPBAR_X ORIGIN_TOPBAR_Y WIDTH_TOPBAR HEIGHT_TOPBAR, 0 0, exp text("@BP_STATS_GAME_STATS"), TEXTSIZE_DEFAULT, 0, 1, ITEM_ALIGN_MIDDLE_CENTER, EOG_TITLE_COLOR )
+	}
+	
+	menuDef
+	{
+		name 			"bp_popup_stats_body"
+		exp				rect X (-(WIDTH_TOPBAR/2)) 
+		exp				rect Y (68+FRAME_ANIMATE(ANIMATE_DISTANCE))
+		rect			ORIGIN_TOPBAR_X ORIGIN_TOPBAR_Y WIDTH_TOPBAR (HEIGHT_TOPBAR+HEIGHT_MAINFRAME+HEIGHT_TOPBAR) HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
+		focusColor		COLOR_FOCUSED
+		style			WINDOW_STYLE_FILLED
+
+		// ==================== SUMMARY FRAME ====================
+
+		// Summary frame
+		FRAMING( RECT_MAINFRAME )
+		FRAMING( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR) WIDTH_TOPBAR 6 )
+		PREPROC_SHADER_DRAW( ORIGIN_TOPBAR_X (ORIGIN_TOPBAR_Y+HEIGHT_TOPBAR) WIDTH_TOPBAR 6, 0 0, "white", 1 1 1 0.15, EOG_BORDER, EOG_BORDER_SIZE, 0 0 0 0 )
+
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL1_X ALIGNED_IN_Y, text "@BP_STATS_MAIN_AWARDS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TITLE_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X ALIGNED_IN_Y, text "@BP_STATS_GAMETYPE_AWARDS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TITLE_COLOR )
+
+		// ========== MAIN AWARDS ==========
+		
+		// most damage inflicted
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL1_X STAT_SLOT_1_Y, text "@BP_STATS_MOST_DAMAGE", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostdamageinflicted_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostdamageinflicted ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_owndamageinflicted ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+
+		// best accuracy
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL1_X STAT_SLOT_2_Y, text "@BP_STATS_BEST_ACCURACY", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_bestaccuracy_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_bestaccuracy ) + "%" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownaccuracy ) + "%" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+
+		// most headshots
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL1_X STAT_SLOT_3_Y, text "@BP_STATS_MOST_HEADSHOTS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostheadshots_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostheadshots ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownheadshots ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// most knives
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL1_X STAT_SLOT_4_Y, text "@BP_STATS_MOST_KNIVES", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostknives_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostknives ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownknives ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// best killstreak
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL1_X STAT_SLOT_5_Y, text "@BP_STATS_BEST_KILLSTREAK", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_bestkillstreak_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_bestkillstreak ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownkillstreak ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// longest shot
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL1_X STAT_SLOT_6_Y, text "@BP_STATS_LONGEST_SHOT", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_longestshot_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_longestshot ) + " Meters" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+80) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL1_X+85) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownlongestshot ) + " Meters" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// top sprayer
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL2_X STAT_SLOT_1_Y, text "@BP_STATS_SPRAYER", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_topsprayer_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_topsprayer ) + " Bullets" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownsprayer ) + " Bullets" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// most teamkills
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL2_X STAT_SLOT_2_Y, text "@BP_STATS_MOST_TEAMKILLS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostteamkills_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostteamkills ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownteamkills ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// most teamkilled
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL2_X STAT_SLOT_3_Y, text "@BP_STATS_MOST_TEAMKILLED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostteamkilld_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostteamkilld ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownteamkilld ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// most distance covered
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL2_X STAT_SLOT_4_Y, text "@BP_STATS_MOST_DISTANCE", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostdistance_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostdistance ) + " Meters" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_owndistance ) + " Meters" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// longest time alive
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL2_X STAT_SLOT_5_Y, text "@BP_STATS_LONGEST_TIME_ALIVE", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_longesttimealive_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_longesttimealive ) + " Seconds" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_5_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_owntimealive ) + " Seconds" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		
+		// top camper
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL2_X STAT_SLOT_6_Y, text "@BP_STATS_CAMPER", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_topcamper_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_topcamper ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+80) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL2_X+85) (STAT_SLOT_6_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_owncamper ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR )
+
+		// ======== GAMETYPE AWARDS ========
+		
+		// === SD/OSD/SAB ===
+		
+		// bombs planted
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_1_Y, text "@BP_STATS_MOST_BOMBS_PLANTED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostbombsplanted_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostbombsplanted ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownbombsplanted ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		
+		// bombs defused
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_2_Y, text "@BP_STATS_MOST_BOMBS_DEFUSED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostbombsdefused_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_mostbombsdefused ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ownbombsdefused ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "sd" || dvarString( ui_stats_gametype ) == "osd" || dvarString( ui_stats_gametype ) == "sab" ); )
+		
+		// ====== DOM ======
+		
+		// flags captured
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_1_Y, text "@BP_STATS_MOST_FLAGS_CAPTURED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "dom" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_dom_mostflagscaptured_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "dom" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_dom_mostflagscaptured ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "dom" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "dom" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_dom_ownflagscaptured ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "dom" ); )
+
+		// = CTF/RCTF ==
+		
+		// flags captured
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_1_Y, text "@BP_STATS_MOST_FLAGS_CAPTURED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagscaptured_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagscaptured ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_ownflagscaptured ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		
+		// flags pickedup
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_2_Y, text "@BP_STATS_MOST_FLAGS_PICKEDUP", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagspickedup_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagspickedup ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_ownflagspickedup ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		
+		// flags defended
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_3_Y, text "@BP_STATS_MOST_FLAGS_DEFENDED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagsdefended_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagsdefended ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_ownflagsdefended ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		
+		// flags returned
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_4_Y, text "@BP_STATS_MOST_FLAGS_RETURNED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagsreturned_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_mostflagsreturned ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_4_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ctf_ownflagsreturned ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ctf" || dvarString( ui_stats_gametype ) == "rctf" ); )
+
+		// = ASS ==
+		
+		// vip killed
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_1_Y, text "@BP_STATS_ASS_KILLED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_mostkilled_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_mostkilled ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_ownkilled ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		
+		// vip picked
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_2_Y, text "@BP_STATS_ASS_PLAYER", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_mostpicked_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_mostpicked ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_ownpicked ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		
+		// vip extracted
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_3_Y, text "@BP_STATS_ASS_EXTRACT", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_mostextract_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_mostextract ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_ass_ownextract ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "ass" ); )
+
+		// = RE ==
+		
+		// re picked
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_1_Y, text "@BP_STATS_RE_PICKED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_mostpicked_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_mostpicked ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_ownpicked ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		
+		// re dropped
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_2_Y, text "@BP_STATS_RE_DROPPED", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_mostdropped_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_mostdropped ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_owndropped ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		
+		// re extracted
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_3_Y, text "@BP_STATS_RE_EXTRACT", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_mostextract_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_mostextract ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_3_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_re_ownextract ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "re" ); )
+
+
+		// = GG ==
+		
+		// gg wins
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_1_Y, text "@BP_STATS_GG_WINS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_gg_mostwins_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_gg_mostwins ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_1_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_gg_ownwins ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		
+		// gg demotes
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, STAT_SLOT_COL3_X STAT_SLOT_2_Y, text "@BP_STATS_GG_DEMOTES", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_gg_mostdemotes_name ) + ":" ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_gg_mostdemotes ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_STATS_YOU", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+		PREPROC_TEXT_DRAW_EXP( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+85) (STAT_SLOT_2_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), exp text( dvarString( ui_stats_gg_owndemotes ) ), TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_LEFT, EOG_TEXT_COLOR visible when( dvarString( ui_stats_gametype ) == "gg" ); )
+
+		
+		// Reminder Take Screenshots
+		PREPROC_TEXT_DRAW( ORIGIN_MAINFRAME 0 0, (STAT_SLOT_COL3_X+80) (STAT_SLOT_7_Y+STAT_SLOT_LINE_GAP+STAT_SLOT_LINE_GAP), text "@BP_REMINDER_SCREENSHOTS", TEXTSIZE_SMALL, 0, 0, ITEM_ALIGN_RIGHT, EOG_TEXT_COLOR )
+	}
+}

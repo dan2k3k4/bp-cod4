@@ -1,0 +1,439 @@
+// ------------------------------------------------
+// Mod: BP Mod
+// Website: http://www.bptourneys.com
+// ------------------------------------------------
+
+VERSION             "1"
+CONFIG              "C:\trees\cod3\cod3\bin\StringEd.cfg"
+FILENOTES           "All game messages made by weapons should go in this file."
+
+REFERENCE           ADMIN_WELCOME
+LANG_ENGLISH        "You Have Been Logged In As An Admin!"
+
+REFERENCE           ADMIN_JOINED
+LANG_ENGLISH        "An Admin Joined The Server!"
+
+REFERENCE           ANTIGLITCH_KILLED_GLITCH
+LANG_ENGLISH        "&&1 was killed by anti-glitch script."
+
+REFERENCE           ANTIGLITCH_WARN_PLAYER
+LANG_ENGLISH        "^1Warning:^7 Near A Glitch Spot"
+
+REFERENCE           ANTIPRONE_WARN_PLAYER
+LANG_ENGLISH        "^1Warning:^7 Proning in this spot is not allowed."
+
+REFERENCE           CTF_FLAG_DEFENDED_BY
+LANG_ENGLISH        "Your flag was defended by &&1!"
+
+REFERENCE           CTF_ENEMY_FLAG_DEFENDED_BY
+LANG_ENGLISH        "Enemy flag was defended by &&1!"
+
+REFERENCE           CLASS_CLASS1
+LANG_ENGLISH        "1. Assault"
+
+REFERENCE           CLASS_CLASS2
+LANG_ENGLISH        "2. Spec Ops"
+
+REFERENCE           CLASS_CLASS3
+LANG_ENGLISH        "3. Heavygunner"
+
+REFERENCE           CLASS_CLASS4
+LANG_ENGLISH        "4. Demolitions"
+
+REFERENCE           CLASS_CLASS5
+LANG_ENGLISH        "5. Sniper"
+
+REFERENCE           GAMETYPE_ARENA
+LANG_ENGLISH        "Arena"
+
+REFERENCE           GAMETYPE_DD
+LANG_ENGLISH        "Demolition"
+
+REFERENCE           GAMETYPE_CJ
+LANG_ENGLISH        "CoDJumper"
+
+REFERENCE           GAMETYPE_GTNW
+LANG_ENGLISH        "Global Thermal Nuclear War"
+
+REFERENCE           GAMETYPE_ONEFLAG
+LANG_ENGLISH        "One Flag CTF"
+
+REFERENCE           GAMETYPE_VIP
+LANG_ENGLISH        "VIP"
+
+REFERENCE           MAPTIME_ENDS_IN
+LANG_ENGLISH        "Map Ends In:"
+
+REFERENCE           MPUI_PRIMARY_WEAPON1
+LANG_ENGLISH        "1. Primary Weapon"
+
+REFERENCE           MPUI_SIDE_ARM1
+LANG_ENGLISH        "3. Side Arm"
+
+REFERENCE           MPUI_SPECIAL_GRENADE
+LANG_ENGLISH        "4. Special Grenade"
+
+REFERENCE           MPUI_PERK_1
+LANG_ENGLISH        "5. Perk 1"
+
+REFERENCE           MPUI_PERK_2
+LANG_ENGLISH        "6. Perk 2"
+
+REFERENCE           MPUI_PERK_3
+LANG_ENGLISH        "7. Perk 3"
+
+REFERENCE           MENU_ACCEPT
+LANG_ENGLISH        "8. Accept"
+
+REFERENCE           PERKS_ATTACHMENT
+LANG_ENGLISH        "2. Primary Attachment"
+
+REFERENCE           PERKS_KAR98_RIFLE
+LANG_ENGLISH        "Kar98 rifle.  Effective at medium-long range."
+
+REFERENCE           REVERSE_CAPTURE_THE_FLAG
+LANG_ENGLISH        "Reverse Capture the Flag"
+
+REFERENCE           REMINDER_SCREENSHOTS
+LANG_ENGLISH        "^1REMINDER^9:^8 Don't Forget To Take Screenshots!"
+
+REFERENCE           SEARCH_AND_DESTROY_OLDSCHOOL
+LANG_ENGLISH        "Oldschool Search and Destory"
+
+REFERENCE           SPECTATE_PRESS_USE_FOR_BOMBER
+LANG_ENGLISH        "-Press ^3[{+activate}]^7 to follow bomber"
+
+REFERENCE           SPECTATE_PRESS_MELEE_FOR_AERIAL
+LANG_ENGLISH        "-Press ^3[{+frag}]^7 to toggle aerial view"
+
+REFERENCE           STATS_YOUR_ACCURACY_IS
+LANG_ENGLISH        "Your accuracy = &&1% (&&2 shots, &&3 hits)"
+
+REFERENCE           STATS_GAME_STATS
+LANG_ENGLISH        "Game Statistics"
+
+REFERENCE           STATS_MAIN_AWARDS
+LANG_ENGLISH        "Main Awards"
+
+REFERENCE           STATS_GAMETYPE_AWARDS
+LANG_ENGLISH        "Gametype Awards"
+
+REFERENCE           STATS_MOST_DAMAGE
+LANG_ENGLISH        "^8Most Damage Inflicted:^7"
+
+REFERENCE           STATS_BEST_ACCURACY
+LANG_ENGLISH        "^8Best Accuracy:^7"
+
+REFERENCE           STATS_MOST_HEADSHOTS
+LANG_ENGLISH        "^8Most Headshots:^7"
+
+REFERENCE           STATS_MOST_KNIVES
+LANG_ENGLISH        "^8Most Knives:^7"
+
+REFERENCE           STATS_BEST_KILLSTREAK
+LANG_ENGLISH        "^8Best Killstreak:^7"
+
+REFERENCE           STATS_LONGEST_SHOT
+LANG_ENGLISH        "^8Longest Shot:^7"
+
+REFERENCE           STATS_MOST_DISTANCE
+LANG_ENGLISH        "^8Most Distance Covered:^7"
+
+REFERENCE           STATS_MOST_TEAMKILLS
+LANG_ENGLISH        "^8Most Teamkills:^7"
+
+REFERENCE           STATS_MOST_TEAMKILLED
+LANG_ENGLISH        "^8Most Teamkilled:^7"
+
+REFERENCE           STATS_LONGEST_TIME_ALIVE
+LANG_ENGLISH        "^8Longest Time Alive:^7"
+
+REFERENCE           STATS_CAMPER
+LANG_ENGLISH        "^8'Camper' (Distance/Time):^7"
+
+REFERENCE           STATS_SPRAYER
+LANG_ENGLISH        "^8'Sprayer' (Most Shots):^7"
+
+REFERENCE           STATS_MOST_BOMBS_PLANTED
+LANG_ENGLISH        "^8Most Bombs Planted:^7"
+
+REFERENCE           STATS_MOST_BOMBS_DEFUSED
+LANG_ENGLISH        "^8Most Bombs Defused:^7"
+
+REFERENCE           STATS_MOST_FLAGS_CAPTURED
+LANG_ENGLISH        "^8Most Flags Captured:^7"
+
+REFERENCE           STATS_MOST_FLAGS_RETURNED
+LANG_ENGLISH        "^8Most Flags Returned:^7"
+
+REFERENCE           STATS_MOST_FLAGS_PICKEDUP
+LANG_ENGLISH        "^8Most Flags Picked Up:^7"
+
+REFERENCE           STATS_MOST_FLAGS_DEFENDED
+LANG_ENGLISH        "^8Most Flags Defended:^7"
+
+REFERENCE           STATS_MOST_OBJS_CAPTURED
+LANG_ENGLISH        "^8Most Objectives Captured:^7"
+
+REFERENCE           STATS_MOST_OBJS_RETURNED
+LANG_ENGLISH        "^8Most Objectives Returned:^7"
+
+REFERENCE           STATS_MOST_OBJS_PICKEDUP
+LANG_ENGLISH        "^8Most Objectives Picked Up:^7"
+
+REFERENCE           STATS_MOST_RADIOS_CAPTURED
+LANG_ENGLISH        "^8Most Radios Captured:^7"
+
+REFERENCE           STATS_ASS_KILLED
+LANG_ENGLISH        "^8Most Killed As VIP:^7"
+
+REFERENCE           STATS_ASS_PLAYER
+LANG_ENGLISH        "^8Most Picked As VIP:^7"
+
+REFERENCE           STATS_ASS_EXTRACT
+LANG_ENGLISH        "^8Most Extracts As VIP:^7"
+
+REFERENCE           STATS_RE_PICKED
+LANG_ENGLISH        "^8Most Objectives Picked Up:^7"
+
+REFERENCE           STATS_RE_DROPPED
+LANG_ENGLISH        "^8Most Objectives Dropped:^7"
+
+REFERENCE           STATS_RE_EXTRACT
+LANG_ENGLISH        "^8Most Objectives Extracted:^7"
+
+REFERENCE           STATS_GG_WINS
+LANG_ENGLISH        "^8Most Rounds Won:^7"
+
+REFERENCE           STATS_GG_DEMOTES
+LANG_ENGLISH        "^8Most Demoted:^7"
+
+REFERENCE           STATS_YOU
+LANG_ENGLISH        "^1You:^7"
+
+REFERENCE           STRAT_DAMAGED_X_Y
+LANG_ENGLISH        "^2Damaged ^7&&1: &&2"
+
+REFERENCE           STRAT_DAMAGE_FROM_X_Y
+LANG_ENGLISH        "^1Damage from ^7&&1: &&2"
+
+REFERENCE           STRAT_END
+LANG_ENGLISH        "^1End"
+
+REFERENCE           STRAT_GAMETYPE
+LANG_ENGLISH        "Strategy (Weapon Training)"
+
+REFERENCE           STRAT_GAMETYPE_OBJ
+LANG_ENGLISH        "Throw a grenade, or use the grenade launcher, or fire an rpg - you will be attached to it. Press USE to stop following it, and USE again to respawn."
+
+REFERENCE           STRAT_GAMETYPE_SCORE
+LANG_ENGLISH        "Simply use this gametype to find tac nades, gl sky spots, or even wall bang spots."
+
+REFERENCE           STRAT_GAMETYPE_HINT
+LANG_ENGLISH        "Play around and learn the map while you're at it too!"
+
+REFERENCE           WEAPON_LONG_SMOKE
+LANG_ENGLISH        "CoD2 Smoke Grenade"
+
+REFERENCE           WEAPON_M16
+LANG_ENGLISH        "1. M16A4"
+
+REFERENCE           WEAPON_AK47
+LANG_ENGLISH        "2. AK-47"
+
+REFERENCE           WEAPON_M4_CARBINE
+LANG_ENGLISH        "3. M4 Carbine"
+
+REFERENCE           WEAPON_G3
+LANG_ENGLISH        "4. G3"
+
+REFERENCE           WEAPON_G36C
+LANG_ENGLISH        "5. G36C"
+
+REFERENCE           WEAPON_M14
+LANG_ENGLISH        "6. M14"
+
+REFERENCE           WEAPON_MP44
+LANG_ENGLISH        "7. MP44"
+
+REFERENCE           WEAPON_KAR98S
+LANG_ENGLISH        "8. Kar 98"
+
+REFERENCE           WEAPON_KAR98
+LANG_ENGLISH        "Kar 98"
+
+REFERENCE           WEAPON_SAW
+LANG_ENGLISH        "1. M249 SAW"
+
+REFERENCE           WEAPON_RPD
+LANG_ENGLISH        "2. RPD"
+
+REFERENCE           WEAPON_M60E4
+LANG_ENGLISH        "3. M60E4"
+
+REFERENCE           WEAPON_MP5
+LANG_ENGLISH        "1. MP5"
+
+REFERENCE           WEAPON_SKORPION
+LANG_ENGLISH        "2. Skorpion"
+
+REFERENCE           WEAPON_UZI
+LANG_ENGLISH        "3. Mini-Uzi"
+
+REFERENCE           WEAPON_AK74U
+LANG_ENGLISH        "4. AK-74u"
+
+REFERENCE           WEAPON_P90
+LANG_ENGLISH        "5. P90"
+
+REFERENCE           WEAPON_WINCHESTER1200
+LANG_ENGLISH        "1. Winchester 1200"
+
+REFERENCE           WEAPON_BENELLI
+LANG_ENGLISH        "2. Benelli M1014"
+
+REFERENCE           WEAPON_M40A3
+LANG_ENGLISH        "1. M40A3 (AWP)"
+
+REFERENCE           WEAPON2_M40A3
+LANG_ENGLISH        "M40A3 (AWP)"
+
+REFERENCE           WEAPON_M21
+LANG_ENGLISH        "2. M40A3 (Stock)"
+
+REFERENCE           WEAPON2_M21
+LANG_ENGLISH        "M40A3 (Stock)"
+
+REFERENCE           WEAPON_DRAGUNOV
+LANG_ENGLISH        "3. R700 (Stock)"
+
+REFERENCE           WEAPON2_DRAGUNOV
+LANG_ENGLISH        "R700 (Stock)"
+
+REFERENCE           WEAPON_REMINGTON700
+LANG_ENGLISH        "4. R700 (AWP)"
+
+REFERENCE           WEAPON2_REMINGTON700
+LANG_ENGLISH        "R700 (AWP)"
+
+REFERENCE           WEAPON_BARRETT
+LANG_ENGLISH        "5. Barrett .50cal"
+
+REFERENCE           WEAPON_BERETTA
+LANG_ENGLISH        "1. M9 Beretta"
+
+REFERENCE           WEAPON_USP
+LANG_ENGLISH        "2. USP .45"
+
+REFERENCE           WEAPON_COLT1911
+LANG_ENGLISH        "3. Colt M1911 .45"
+
+REFERENCE           WEAPON_DESERTEAGLE
+LANG_ENGLISH        "4. Desert Eagle"
+
+REFERENCE           WEAPON_DESERTEAGLEGOLD
+LANG_ENGLISH        "5. Golden Desert Eagle"
+
+REFERENCE           MPUI_NONE
+LANG_ENGLISH        "1. None"
+
+REFERENCE           MPUI_DESERT
+LANG_ENGLISH        "2. Desert"
+
+REFERENCE           MPUI_WOODLAND
+LANG_ENGLISH        "3. Woodland"
+
+REFERENCE           MPUI_DIGITAL
+LANG_ENGLISH        "4. Digital"
+
+REFERENCE           MPUI_RED_TIGER
+LANG_ENGLISH        "5. Red Tiger"
+
+REFERENCE           MPUI_BLUE_TIGER
+LANG_ENGLISH        "6. Blue Tiger"
+
+REFERENCE           MPUI_GOLDEN
+LANG_ENGLISH        "7. Golden"
+
+REFERENCE           WEAPON_FLASH_GRENADE
+LANG_ENGLISH        "1. Flash"
+
+REFERENCE           WEAPON_STUN_GRENADE
+LANG_ENGLISH        "2. Advanced Smoke"
+
+REFERENCE           WEAPON_SMOKE_GRENADE
+LANG_ENGLISH        "3. Smoke"
+
+REFERENCE           PERKS_C4_X_2
+LANG_ENGLISH        "1. C4"
+
+REFERENCE           PERKS_SPECIAL_GRENADES_X_3
+LANG_ENGLISH        "2. Special Grenades x 3"
+
+REFERENCE           PERKS_RPG7_X_2
+LANG_ENGLISH        "3. RPG-7"
+
+REFERENCE           PERKS_CLAYMORE_X_2
+LANG_ENGLISH        "4. Claymore"
+
+REFERENCE           PERKS_FRAG_X_3
+LANG_ENGLISH        "5. Frag x 3"
+
+REFERENCE           PERKS_BANDOLIER
+LANG_ENGLISH        "6. Bandolier"
+
+REFERENCE           PERKS_BOMB_SQUAD
+LANG_ENGLISH        "7. Bomb Squad"
+
+REFERENCE           PERKS_STOPPING_POWER
+LANG_ENGLISH        "1. Stopping Power"
+
+REFERENCE           PERKS_JUGGERNAUT
+LANG_ENGLISH        "2. Juggernaut"
+
+REFERENCE           PERKS_SLEIGHT_OF_HAND
+LANG_ENGLISH        "3. Sleight of Hand"
+
+REFERENCE           PERKS_DOUBLE_TAP
+LANG_ENGLISH        "4. Double Tap"
+
+REFERENCE           PERKS_UAV_JAMMER
+LANG_ENGLISH        "5. UAV Jammer"
+
+REFERENCE           PERKS_SONIC_BOOM
+LANG_ENGLISH        "6. Sonic Boom"
+
+REFERENCE           PERKS_EXTREME_CONDITIONING
+LANG_ENGLISH        "1. Extreme Conditioning"
+
+REFERENCE           PERKS_STEADY_AIM
+LANG_ENGLISH        "2. Steady Aim"
+
+REFERENCE           PERKS_LAST_STAND
+LANG_ENGLISH        "3. Last Stand"
+
+REFERENCE           PERKS_MARTYRDOM
+LANG_ENGLISH        "4. Martyrdom"
+
+REFERENCE           PERKS_DEEP_IMPACT
+LANG_ENGLISH        "5. Deep Impact"
+
+REFERENCE           PERKS_IRON_LUNGS
+LANG_ENGLISH        "6. Iron Lungs"
+
+REFERENCE           PERKS_DEAD_SILENCE
+LANG_ENGLISH        "7. Dead Silence"
+
+REFERENCE           PERKS_EAVESDROP
+LANG_ENGLISH        "8. Eavesdrop"
+
+REFERENCE           QUICKMESSAGE_4_PRO_CONTROL
+LANG_ENGLISH        "4. Promod Controls"
+
+REFERENCE           QUICKMESSAGE_4_PRO_GRAPHIC
+LANG_ENGLISH        "5. Promod Graphics"
+
+REFERENCE           QUICKMESSAGE_EXIT
+LANG_ENGLISH        "Esc. Exit"
+
+ENDMARKER
